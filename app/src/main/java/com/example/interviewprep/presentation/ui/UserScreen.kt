@@ -65,43 +65,77 @@ fun UserScreen(viewModel: UserViewModel = hiltViewModel()) {
         } else {
             LazyColumn {
                 items(users, key = { it.id }) { user ->
-                    Card(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)) {
-                        val avatarUrl = user.avatar.takeIf { !it.isNullOrEmpty() } ?: "https://robohash.org/${user.id}}.png"
-                        Row(modifier = Modifier.padding(16.dp)) {
-                            Image(
-                                painter = rememberAsyncImagePainter(avatarUrl),
-                                contentDescription = "User Avatar",
-                                modifier = Modifier
-                                    .size(48.dp)
-                                    .clip(CircleShape)
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Column {
-                                Text(text = user.name, style = MaterialTheme.typography.headlineMedium)
-                                Text(text = user.email, style = MaterialTheme.typography.bodyMedium )
-                            }
-                        }
-                        Row {
-                            Button(onClick = {
-                                viewModel.updateUser(user.id, user.copy(name = "Updated User"))
-                            }) {
-                                Text("Update")
-                            }
-                            Spacer(modifier = Modifier.width(8.dp))
-
-                            Button(onClick = {
-                                viewModel.deleteUser(user.id)
-                            }) {
-                                Text("Delete")
-                            }
-                        }
-
-                    }
+                    UserCard(user, viewModel)
+//                    Card(modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(8.dp)) {
+//                        val avatarUrl = user.avatar.takeIf { !it.isNullOrEmpty() } ?: "https://robohash.org/${user.id}}.png"
+//                        Row(modifier = Modifier.padding(16.dp)) {
+//                            Image(
+//                                painter = rememberAsyncImagePainter(avatarUrl),
+//                                contentDescription = "User Avatar",
+//                                modifier = Modifier
+//                                    .size(48.dp)
+//                                    .clip(CircleShape)
+//                            )
+//                            Spacer(modifier = Modifier.width(8.dp))
+//                            Column {
+//                                Text(text = user.name, style = MaterialTheme.typography.headlineMedium)
+//                                Text(text = user.email, style = MaterialTheme.typography.bodyMedium )
+//                            }
+//                        }
+//                        Row {
+//                            Button(onClick = {
+//                                viewModel.updateUser(user.id, user.copy(name = "Updated User"))
+//                            }) {
+//                                Text("Update")
+//                            }
+//                            Spacer(modifier = Modifier.width(8.dp))
+//
+//                            Button(onClick = {
+//                                viewModel.deleteUser(user.id)
+//                            }) {
+//                                Text("Delete")
+//                            }
+//                        }
+//
+//                    }
                 }
             }
         }
     }
 
+}
+
+@Composable
+fun UserCard(user: User, viewModel: UserViewModel) {
+    Card(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
+        Row(modifier = Modifier.padding(16.dp)) {
+            Image(
+                painter = rememberAsyncImagePainter(user.avatar),
+                contentDescription = "User Avatar",
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(CircleShape)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Column {
+                Text(text = user.name, style = MaterialTheme.typography.headlineSmall)
+                Text(text = user.email, style = MaterialTheme.typography.bodyMedium)
+            }
+        }
+        Row {
+            Button(onClick = {
+                viewModel.updateUser(user.id, user.copy(name = "Updated User"))
+            }) {
+                Text("Update")
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            Button(onClick = {
+                viewModel.deleteUser(user.id)
+            }) {
+                Text("Delete")
+            }
+        }
+    }
 }
