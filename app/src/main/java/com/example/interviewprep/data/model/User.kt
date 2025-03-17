@@ -4,5 +4,9 @@ data class User (
     val id: Int,
     val name: String,
     val email: String,
-    val avatar: String? = "https://robohash.org/${id}.png"
-)
+    var avatar: String?
+) {
+    constructor(id: Int, name: String, email: String) : this(
+        id, name, email, "https://robohash.org/$id.png"
+    )
+}

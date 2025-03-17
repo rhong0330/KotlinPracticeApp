@@ -7,22 +7,33 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import retrofit2.Response
 import javax.inject.Inject
 
 class UserRepository @Inject constructor(private val api: UserApi) {
     fun getUsers(): Flow<List<User>> = flow {
-        val users = api.getUsers()
-        emit(users)
+        val response = api.getUsers()
+        if (response.isSuccessful) {
+            response.body()?.let { emit(it) }
+        } else {
+            throw Exception("API Error: ${response.code()} - ${response.message()}")
+        }
     }.catch { e ->
-        throw e
+        Log.e("UserRepository", "Error fetching users: ${e.message}")
+        emit(emptyList())
     }
 
 
     fun getUserById(userId: Int): Flow<User?> = flow {
-        val user = api.getUserById(userId)
-        emit(user)
+        val response = api.getUserById(userId)
+        if (response.isSuccessful) {
+            emit(response.body())
+        } else {
+            throw Exception("API Error: ${response.code()} - ${response.message()}")
+        }
     }.catch { e ->
-        throw e
+        Log.e( "UserRepository", "Error fetching userById: ${e.message}")
+        emit(null)
     }
 
     suspend fun createUser(user: User): Boolean {
@@ -43,21 +54,32 @@ class UserRepository @Inject constructor(private val api: UserApi) {
 
     suspend fun updateUser(userId: Int, user: User): Boolean {
         return try {
-            api.updateUser(userId, user)
-            true
+            val response = api.updateUser(userId, user)
+            if (response.isSuccessful) {
+                true
+            } else {
+                Log.e("UserRepository", "Error updating user: ${response.errorBody()?.string()}")
+                false
+            }
         } catch (e: Exception) {
+            Log.e("UserRepository", "Exception updating user: ${e.message}")
             false
         }
     }
 
     suspend fun deleteUser(userId: Int): Boolean {
         return try {
-            api.deleteUser(userId)
-            true
+            val response = api.deleteUser(userId)
+            if (response.isSuccessful) {
+                true
+            } else {
+                Log.e("UserRepository", "Error deleting user: ${response.errorBody()?.string()}")
+                false
+            }
+
         } catch (e: Exception) {
+            Log.e("UserRepository", "Exception deleting user: ${e.message}")
             false
         }
     }
-
-
 }
