@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
@@ -19,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.interviewprep.presentation.viewmodel.UserViewModel
@@ -48,7 +50,7 @@ fun UserScreen(viewModel: UserViewModel = hiltViewModel()) {
                 id = users.size + 1,
                 name = "New User",
                 email = "newuser@example.com",
-                avatar = ""
+                avatar = "https://robohash.org/${users.size + 1}.png"
             )
             viewModel.createUser(newUser)
         }, modifier = Modifier.padding(16.dp)) {
@@ -63,12 +65,17 @@ fun UserScreen(viewModel: UserViewModel = hiltViewModel()) {
         } else {
             LazyColumn {
                 items(users, key = { it.id }) { user ->
-                    Card(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
+                    Card(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)) {
+                        val avatarUrl = user.avatar.takeIf { !it.isNullOrEmpty() } ?: "https://robohash.org/${user.id}}.png"
                         Row(modifier = Modifier.padding(16.dp)) {
                             Image(
-                                painter = rememberAsyncImagePainter(user.avatar),
+                                painter = rememberAsyncImagePainter(avatarUrl),
                                 contentDescription = "User Avatar",
-                                modifier = Modifier.size(48.dp)
+                                modifier = Modifier
+                                    .size(48.dp)
+                                    .clip(CircleShape)
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Column {
