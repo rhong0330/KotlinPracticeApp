@@ -10,6 +10,7 @@ import com.example.interviewprep.domain.usecase.GetUserByIdUseCase
 import com.example.interviewprep.domain.usecase.GetUsersUseCase
 import com.example.interviewprep.domain.usecase.UpdateUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -64,9 +66,10 @@ class UserViewModel @Inject constructor(
     fun createUser(user: User) {
         viewModelScope.launch {
             try {
-                val success = createUserUseCase.execute(user)
+                val success = withContext(Dispatchers.IO) { createUserUseCase.execute(user) }
                 if (success) {
-                    _users.value += user
+                    _users.value = _users.value.toMutableList().apply { add(user) }
+                    //_users.value += user
                 } else {
                     _errorMessage.value = "Failed to create user"
                 }

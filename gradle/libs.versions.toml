@@ -13,6 +13,8 @@ retrofit = "2.9.0"
 hiltNavigationCompose = "1.0.0"
 coil = "2.1.0"
 kapt = "1.9.0"
+mockk = "1.13.4"
+coroutinesTest = "1.7.1"
 
 
 [libraries]
@@ -36,6 +38,9 @@ hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hil
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit-converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk"}
+mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockk"}
+coroutines-test = {module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutinesTest"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
