@@ -16,4 +16,41 @@ class UserRepository @Inject constructor(private val api: UserApi) {
             emit(emptyList())
         }
     }.catch { emit(emptyList()) }
+
+    fun getUserById(userId: Int): Flow<User?> = flow {
+        try {
+            emit(api.getUserById(userId))
+        } catch (e: Exception) {
+            emit(null)
+        }
+    }
+
+    suspend fun createUser(user: User): Boolean {
+        return try {
+            api.createUser(user)
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    suspend fun updateUser(userId: Int, user: User): Boolean {
+        return try {
+            api.updateUser(userId, user)
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    suspend fun deleteUser(userId: Int): Boolean {
+        return try {
+            api.deleteUser(userId)
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+
 }

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -18,18 +19,41 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.interviewprep.presentation.viewmodel.UserViewModel
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.example.interviewprep.data.model.User
 
 @Composable
 fun UserScreen(viewModel: UserViewModel = hiltViewModel()) {
     val users by viewModel.users.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
+    val errorMessage by viewModel.errorMessage.collectAsState()
 
     Column {
         Text(text = "User List", style = MaterialTheme.typography.headlineSmall, modifier = Modifier.padding(16.dp))
+
+        if (!errorMessage.isNullOrEmpty()) {
+            Text(
+                text = errorMessage!!,
+                color = Color.Red,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+
+        Button(onClick = {
+            val newUser = User(
+                id = users.size + 1,
+                name = "New User",
+                email = "newuser@example.com",
+                avatar = ""
+            )
+            viewModel.createUser(newUser)
+        }, modifier = Modifier.padding(16.dp)) {
+            Text("Add User")
+        }
 
         if (isLoading) {
             CircularProgressIndicator(modifier = Modifier.padding(16.dp))
@@ -50,6 +74,20 @@ fun UserScreen(viewModel: UserViewModel = hiltViewModel()) {
                             Column {
                                 Text(text = user.name, style = MaterialTheme.typography.headlineMedium)
                                 Text(text = user.email, style = MaterialTheme.typography.bodyMedium )
+                            }
+                        }
+                        Row {
+                            Button(onClick = {
+                                viewModel.updateUser(user.id, user.copy(name = "Updated User"))
+                            }) {
+                                Text("Update")
+                            }
+                            Spacer(modifier = Modifier.width(8.dp))
+
+                            Button(onClick = {
+                                viewModel.deleteUser(user.id)
+                            }) {
+                                Text("Delete")
                             }
                         }
 
