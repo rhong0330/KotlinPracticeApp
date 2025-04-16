@@ -22,10 +22,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.interviewprep.presentation.viewmodel.UserViewModel
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.example.interviewprep.R
 import com.example.interviewprep.data.model.User
 
 @Composable
@@ -66,40 +68,6 @@ fun UserScreen(viewModel: UserViewModel = hiltViewModel()) {
             LazyColumn {
                 items(users, key = { it.id }) { user ->
                     UserCard(user, viewModel)
-//                    Card(modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(8.dp)) {
-//                        val avatarUrl = user.avatar.takeIf { !it.isNullOrEmpty() } ?: "https://robohash.org/${user.id}}.png"
-//                        Row(modifier = Modifier.padding(16.dp)) {
-//                            Image(
-//                                painter = rememberAsyncImagePainter(avatarUrl),
-//                                contentDescription = "User Avatar",
-//                                modifier = Modifier
-//                                    .size(48.dp)
-//                                    .clip(CircleShape)
-//                            )
-//                            Spacer(modifier = Modifier.width(8.dp))
-//                            Column {
-//                                Text(text = user.name, style = MaterialTheme.typography.headlineMedium)
-//                                Text(text = user.email, style = MaterialTheme.typography.bodyMedium )
-//                            }
-//                        }
-//                        Row {
-//                            Button(onClick = {
-//                                viewModel.updateUser(user.id, user.copy(name = "Updated User"))
-//                            }) {
-//                                Text("Update")
-//                            }
-//                            Spacer(modifier = Modifier.width(8.dp))
-//
-//                            Button(onClick = {
-//                                viewModel.deleteUser(user.id)
-//                            }) {
-//                                Text("Delete")
-//                            }
-//                        }
-//
-//                    }
                 }
             }
         }
@@ -109,10 +77,17 @@ fun UserScreen(viewModel: UserViewModel = hiltViewModel()) {
 
 @Composable
 fun UserCard(user: User, viewModel: UserViewModel) {
+    val avatarUrl = user.avatar ?: "https://robohash.org/${user.id}.png"
+    val painter = rememberAsyncImagePainter(
+        model = avatarUrl,
+        placeholder = painterResource(id = R.drawable.placeholder_user),
+        error = painterResource(id = R.drawable.error_user)
+    )
+
     Card(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
         Row(modifier = Modifier.padding(16.dp)) {
             Image(
-                painter = rememberAsyncImagePainter(user.avatar),
+                painter = painter,
                 contentDescription = "User Avatar",
                 modifier = Modifier
                     .size(48.dp)
